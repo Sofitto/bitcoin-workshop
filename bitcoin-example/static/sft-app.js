@@ -43,10 +43,10 @@ function SftApp(blockChain) {
             return;
         }
         
-        /* Simple flow */
+        /* Simple flow. Part 1 */
         currentTransaction = blockChain.signTransaction(transaction, card.getPrivateKey());
 
-        /* Advanced flow
+        /* Advanced flow. Part 2
         var challenges = blockChain.getCryptoChallenges(transaction);
 
         var serialized = challenges.map(card.sign);

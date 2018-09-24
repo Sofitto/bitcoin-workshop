@@ -37,7 +37,7 @@ function SftCard(blockChain, storage, cardNumber) {
     };
 
     this.getPrivateKey = function () {
-        return blockChain.toPrivateKey(_privateKey);
+        return _privateKey;
     };
 
     this.isInitialized = function () {

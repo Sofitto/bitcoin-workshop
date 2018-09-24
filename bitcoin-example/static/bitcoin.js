@@ -10,15 +10,12 @@ function BitcoinBlockchain(config) {
     var est_fee = 21000;
     var ECDSA = bitcore.crypto.ECDSA;
 
+    // Part 1
     this.generatePrivateKey = function () {
         // TODO: IMPLEMENT
     };
 
     this.toPublicKeyString = function (privateKeyString) {
-        // TODO: IMPLEMENT
-    };
-
-    this.toPrivateKey = function (privateKeyString) {
         // TODO: IMPLEMENT
     };
 
@@ -30,7 +27,11 @@ function BitcoinBlockchain(config) {
         // TODO: IMPLEMENT
     };
 
-    this.signTransaction = function (tx, priv) {
+    this.createTransactionFromUtxos = function (toAddress, fromAddress, amountBTC, utxos, balance) {
+        // TODO: IMPLEMENT
+    };
+
+    this.signTransaction = function (tx, privateKey) {
         // TODO: IMPLEMENT
     };
 
@@ -38,10 +39,7 @@ function BitcoinBlockchain(config) {
         // TODO: IMPLEMENT
     };
 
-    this.createTransactionFromUtxos = function (toAddress, fromAddress, amountBTC, utxos, balance) {
-        // TODO: IMPLEMENT
-    };
-
+    // Part 2
     this.getCryptoChallenges = function (transaction) {
         // TODO: IMPLEMENT
     };
@@ -64,7 +62,7 @@ function BitcoinBlockchain(config) {
 
 
     this.signDigest = function (privateKey, digest) {
-        var bitcorePK = this.toPrivateKey(privateKey);
+        var bitcorePK = new bitcore.PrivateKey(privateKey);
         var sig = ECDSA.sign(digest, bitcorePK, 'little').set({
             nhashtype: sigtype
         });

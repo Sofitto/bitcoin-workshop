@@ -128,10 +128,6 @@ function BitcoinBlockchain(config) {
         return privateKey.publicKey.toString()
     };
 
-    this.toPrivateKey = function (privateKeyString) {
-        return new bitcore.PrivateKey(privateKeyString);
-    };
-
     this.fromBufferToSignature = function (buf) {
         return bitcore.crypto.Signature.fromBuffer(buf);
     };
@@ -145,7 +141,7 @@ function BitcoinBlockchain(config) {
     };
 
     this.signDigest = function (privateKey, digest) {
-        var bitcorePK = this.toPrivateKey(privateKey);
+        var bitcorePK = new bitcore.PrivateKey(privateKey);
         var sig = ECDSA.sign(digest, bitcorePK, 'little').set({
             nhashtype: sigtype
         });
