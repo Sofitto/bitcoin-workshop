@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bitcoin demo</title>
+
+    <link rel="stylesheet" href="mdl/material-light-orange.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+    <script src="bower_components/bitcore-lib/bitcore-lib.js"></script>
+    <script src="bower_components/bitcore-explorers/bitcore-explorers.js"></script>
+    <script src="bower_components/moment/min/moment.min.js"></script>
+    <script src="mdl/material.min.js"></script>
+    <script src="qrcode.js"></script>
+
+    <script src="sft-card.js"></script>
+    <script src="sft-app.js"></script>
+    <script src="bitcoin.js"></script>
+    <script src="utils.js"></script>
+
+    <script src="index.js"></script>
+
+    <style>
+        .page-content {
+            padding-left: 20px;
+            padding-top: 20px;
+        }
+        form {
+            padding-top: 10px;
+        }
+        #log {
+            margin-top: 20px;
+            height: 500px;
+            overflow-y: auto;
+            border-top: 2px solid #e0e0e0;
+        }
+        .mdl-switch .mdl-switch__label {
+            font-size: 14px;
+        }
+        .small-icon {
+            font-size: 16px;
+        }
+    </style>
+
+</head>
+<body>
+    <!-- The drawer is always open in large screens. The header is always shown,
+      even in small screens. -->
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer
+            mdl-layout--fixed-header">
+        <header class="mdl-layout__header">
+            <div class="mdl-layout__header-row">
+                <span class="mdl-layout-title">Bitcoin demo</span>
+            </div>
+        </header>
+        <div class="mdl-layout__drawer">
+            <span class="mdl-layout-title">Cards</span>
+            <nav class="mdl-navigation" id="cardsList">
+                <!--<a class="mdl-navigation__link" href="">1231-4354-3535-5645</a>-->
+            </nav>
+            <div style="text-align:center;padding-top: 10px;">
+                <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--accent" id="createCardBtn">
+                    <i class="material-icons">add</i>
+                </button>
+            </div>
+            <div style="text-align:center;">
+                <label for="createCardBtn">Add new card</label>
+            </div>
+        </div>
+        <main class="mdl-layout__content">
+            <div class="page-content">
+                <div id="mainContent" style="display: none;">
+                    <div id="initDiv" style="display: none;">
+                        <button id="initBtn" class="mdl-button mdl-js-button mdl-button--raised">Init Card</button>
+                    </div>
+                    <div id="cardInfo">
+                        <div class="mdl-grid">
+                            <div class="mdl-cell mdl-cell--4-col">
+                                <div id="qr" class="qr"></div>
+                                <div>
+                                    <span><a id="cardAddress" target="_blank"></a></span>
+                                </div>
+                                <div>
+                                    Card Number: <span id="cardNumber"></span>
+                                    <button class="mdl-button mdl-js-button mdl-button--icon" id="copyToClipboardBtn" title="Copy to clipboard">
+                                        <i class="material-icons small-icon">content_copy</i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mdl-cell mdl-cell--4-col">
+                                Balance: <span id="balance" style="color:rgb(255,171,64);font-size: 20px;"></span> BTC
+                                <button class="mdl-button mdl-js-button mdl-button--icon" id="refreshBalanceBtn" title="Refresh balance">
+                                    <i class="material-icons small-icon">autorenew</i>
+                                </button>
+                            </div>
+                            <div class="mdl-cell mdl-cell--4-col">
+                                <label class="mdl-switch mdl-js-switch" for="testnetSwitch">
+                                    <input type="checkbox" id="testnetSwitch" class="mdl-switch__input" checked>
+                                    <span class="mdl-switch__label">TestNet</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
+                            <div class="mdl-tabs__tab-bar">
+                                <a href="#transfer-panel" class="mdl-tabs__tab is-active">Transfer</a>                                
+                                <a href="#withdraw-panel" class="mdl-tabs__tab">Withdraw</a>
+                            </div>
+
+                            <div class="mdl-tabs__panel is-active" id="transfer-panel">
+                                <div>
+                                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                        <input class="mdl-textfield__input" type="text" id="toAddress">
+                                        <label class="mdl-textfield__label" for="toAddress">To:...</label>
+                                    </div>
+                                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                        <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" id="transferAmount">
+                                        <label class="mdl-textfield__label" for="transferAmount">Amount...</label>
+                                        <span class="mdl-textfield__error">Input is not a number!</span>
+                                    </div>
+                                    <div class="mdl-textfield" style="width: 80px;">
+                                        <label class="mdl-checkbox mdl-js-checkbox" for="isBTC">
+                                            <input type="checkbox" id="isBTC" class="mdl-checkbox__input">
+                                            <span class="mdl-checkbox__label">BTC</span>
+                                        </label>
+                                    </div>
+                                    <button id="allBtn" class="mdl-button mdl-js-button mdl-button--raised">All</button>
+                                </div>
+                                <button id="txBtn" style="display: none;" class="mdl-button mdl-js-button mdl-button--raised">Create Transaction</button>
+                                <button id="txServerBtn" style="display: none;" class="mdl-button mdl-js-button mdl-button--raised">Transfer</button>
+                                <div style="padding-top: 5px;"><button id="broadcastTxBtn" style="display: none;" class="mdl-button mdl-js-button mdl-button--raised">Broadcast Transaction</button></div>
+                            </div>
+                            <div class="mdl-tabs__panel" id="withdraw-panel">
+                                <form action="#">
+                                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                        <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" id="withdrawAmount" value="0.20">
+                                        <label class="mdl-textfield__label" for="withdrawAmount">Amount...</label>
+                                        <span class="mdl-textfield__error">Input is not a number!</span>
+                                    </div>
+                                </form>
+                                <button id="withdrawBtn" class="mdl-button mdl-js-button mdl-button--raised">Withdraw</button>
+                            </div>                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>
